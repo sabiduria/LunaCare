@@ -28,6 +28,7 @@
         }
     </style>
     <script type="module">
+        document.getElementById('sendMessage').addEventListener('click', sendMessage);
         import { marked } from "https://cdn.jsdelivr.net/npm/marked@13.0.3/lib/marked.esm.js";
         import DOMPurify from "https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.es.mjs";
         let aiSession = null;
@@ -99,6 +100,6 @@
     <h1>Welcome to LunaCare</h1>
     <div id="chat"></div>
     <input id="input" type="text" placeholder="Type your message...">
-    <button onclick="sendMessage()">Send</button>
+    <button id="sendMessage">Send</button>
 </body>
 </html>
