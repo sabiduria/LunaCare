@@ -30,7 +30,7 @@
             if (!window.ai) throw new Error('Chrome AI API not available');
 
             try {
-                aiSession = await ai.createTextSession();
+                aiSession = await self.ai.languageModel.create();
                 console.log('AI session created');
             } catch (error) {
                 console.error('Failed to initialize AI:', error);
