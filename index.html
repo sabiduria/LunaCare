@@ -16,14 +16,9 @@
             width: 50%;
         }
     </style>
-</head>
-<body>
-    <h1>Welcome to LunaCare</h1>
-    <div id="chat"></div>
-    <input id="input" type="text" placeholder="Type your message...">
-    <button onclick="sendMessage()">Send</button>
-
-    <script>
+    <script type="module">
+        import { marked } from "https://cdn.jsdelivr.net/npm/marked@13.0.3/lib/marked.esm.js";
+        import DOMPurify from "https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.es.mjs";
         let aiSession = null;
 
         async function initTextSession() {
@@ -57,7 +52,7 @@
 
             try {
                 const response = await aiSession.prompt(message);
-                addMessage('AI Response: ' + response);
+                addMessage('AI Response: ' + DOMPurify.sanitize(marked.parse(response)));
             } catch (error) {
                 console.error('Error getting AI response:', error);
                 addMessage('AI Response: Sorry, I encountered an error. Please try again.');
@@ -70,5 +65,11 @@
 
         initTextSession();
     </script>
+</head>
+<body>
+    <h1>Welcome to LunaCare</h1>
+    <div id="chat"></div>
+    <input id="input" type="text" placeholder="Type your message...">
+    <button onclick="sendMessage()">Send</button>
 </body>
 </html>
