@@ -2,7 +2,6 @@
 
 **LunaCare** is an AI-powered assistant designed to empower individuals with insights and tools to manage their menstrual health effectively. With features like cycle tracking, symptom analysis, and personalized recommendations, LunaCare is your trusted companion for menstrual wellness.
 
----
 
 ## ✨ Features
 
@@ -12,7 +11,6 @@
 - **Insights Dashboard**: Visualize trends in your cycle for better health planning.
 - **Data Privacy**: Your data is encrypted and secure.
 
----
 
 ## 🚀 Getting Started
 
@@ -25,46 +23,39 @@
 ### Installation
 
 1. Clone the repository:
-   \`\`\`bash
+   ```console
    git clone https://github.com/sabiduria/LunaCare.git
    cd LunaCare
-   \`\`\`
+   ```
 
-2. Install dependencies:
-   \`\`\`bash
-   npm install
-   \`\`\`
+2. Start the application:
+   ```console
+   python -m http.server 8000
+   ```
 
-3. Start the application:
-   \`\`\`bash
-   npm start
-   \`\`\`
+3. Open your browser and navigate to:
+   ```
+   http://localhost:8000
+   ```
 
-4. Open your browser and navigate to:
-   \`\`\`
-   http://localhost:3000
-   \`\`\`
-
----
 
 ## 🤝 Contributing
 
 1. Fork the repository.
 2. Create a feature branch:
-   \`\`\`bash
+   ```bash
    git checkout -b feature-name
-   \`\`\`
+   ```
 3. Commit changes:
-   \`\`\`bash
+   ```bash
    git commit -m "Added feature"
-   \`\`\`
+   ```
 4. Push to the branch:
-   \`\`\`bash
+   ```bash
    git push origin feature-name
-   \`\`\`
+   ```
 5. Open a pull request.
 
----
 
 ## 💬 Contact
 
@@ -72,6 +63,5 @@
 - **Website**: [sabiantart.com](https://sabiantart.com)
 - **GitHub Issues**: Use the [Issues tab](https://github.com/sabiduria/LunaCare/issues)
 
----
 
 ### 🌟 Star this repo if LunaCare inspires you!
