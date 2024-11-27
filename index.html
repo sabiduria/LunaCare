@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Chrome AI Chatbot</title>
+    <style>
+        #chat{
+            height: 300px;
+            border : 1px solid;
+            overflow-y: scroll;
+        }
+
+        #input{
+            margin-top: 1rem;
+            width: 50%;
+        }
+    </style>
+</head>
+<body>
+    <h1>Welcome to LunaCare</h1>
+    <div id="chat"></div>
+    <input id="input" type="text" placeholder="Type your message...">
+    <button onclick="sendMessage()">Send</button>
+
+    <script>
+        let aiSession = null;
+
+        async function initTextSession() {
+            if (!window.ai) throw new Error('Chrome AI API not available');
+
+            try {
+                aiSession = await ai.createTextSession();
+                console.log('AI session created');
+            } catch (error) {
+                console.error('Failed to initialize AI:', error);
+                addMessage('AI Response : Sorry, I am not available right now.');
+            }
+        }
+
+        function addMessage(message) {
+            document.getElementById('chat').innerHTML += message + '<br>';
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('input');
+            const message = input.value.trim();
+            if (!message) return;
+
+            addMessage('Your Prompt : ' + message);
+            input.value = '';
+
+            if (!aiSession) {
+                addMessage('AI Response: Sorry, I am not available right now.');
+                return;
+            }
+
+            try {
+                const response = await aiSession.prompt(message);
+                addMessage('AI Response: ' + response);
+            } catch (error) {
+                console.error('Error getting AI response:', error);
+                addMessage('AI Response: Sorry, I encountered an error. Please try again.');
+            }
+        }
+
+        document.getElementById('input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendMessage();
+        });
+
+        initTextSession();
+    </script>
+</body>
+</html>
