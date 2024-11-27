@@ -15,6 +15,17 @@
             margin-top: 1rem;
             width: 50%;
         }
+
+        @keyframes blinkingText {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        #thinking {
+            color: gray;
+            font-style: italic;
+        }
     </style>
     <script type="module">
         import { marked } from "https://cdn.jsdelivr.net/npm/marked@13.0.3/lib/marked.esm.js";
@@ -33,6 +44,20 @@
             }
         }
 
+        function showThinking() {
+            const chat = document.getElementById('chat');
+            const thinkingElement = document.createElement('span');
+            thinkingElement.id = 'thinking';
+            thinkingElement.textContent = 'Just a moment Luna is thinking...';
+            thinkingElement.style.animation = 'blinkingText 1s infinite';
+            chat.appendChild(thinkingElement);
+        }
+
+        function removeThinking() {
+            const thinkingElement = document.getElementById('thinking');
+            if (thinkingElement) thinkingElement.remove();
+        }
+
         function addMessage(message) {
             document.getElementById('chat').innerHTML += message + '<br>';
         }
@@ -42,20 +67,24 @@
             const message = input.value.trim();
             if (!message) return;
 
-            addMessage('Your Prompt : ' + message);
+            //addMessage('You: ' + message);
             input.value = '';
 
             if (!aiSession) {
-                addMessage('AI Response: Sorry, I am not available right now.');
+                addMessage('Sabiduria: Sorry, I am not available right now.');
                 return;
             }
 
+            showThinking(); // Show "Thinking..." before getting the response
+
             try {
                 const response = await aiSession.prompt(message);
-                addMessage('AI Response: ' + DOMPurify.sanitize(marked.parse(response)));
+                removeThinking(); // Remove "Thinking..." once the response is ready
+                addMessage(DOMPurify.sanitize(marked.parse(response)));
             } catch (error) {
                 console.error('Error getting AI response:', error);
-                addMessage('AI Response: Sorry, I encountered an error. Please try again.');
+                removeThinking();
+                addMessage('Sabiduria: Sorry, I encountered an error. Please try again.');
             }
         }
 
