@@ -45,7 +45,11 @@
             if (!window.ai) throw new Error('Chrome AI API not available');
 
             try {
-                aiSession = await self.ai.languageModel.create();
+                aiSession = await self.ai.languageModel.create(
+                    {
+                        systemPrompt: "You are a friendly, helpful assistant specialized in health, menstruation. Provide link to different article related to your specialization when responding"
+                    }
+                );
                 console.log('AI session created');
             } catch (error) {
                 console.error('Failed to initialize AI:', error);
