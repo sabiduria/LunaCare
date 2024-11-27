@@ -47,7 +47,7 @@
             try {
                 aiSession = await self.ai.languageModel.create(
                     {
-                        systemPrompt: "You are a friendly, helpful assistant specialized in health, menstruation. Provide link to different article related to your specialization when responding"
+                        systemPrompt: "You are a friendly, helpful assistant specialized in health, menstruation. Provide correct link to different article related to your specialization when responding"
                     }
                 );
                 console.log('AI session created');
@@ -94,10 +94,45 @@
                 const response = await aiSession.prompt(message);
                 removeThinking(); // Remove "Thinking..." once the response is ready
                 addMessage(DOMPurify.sanitize(marked.parse(response)));
+                addSummarizeButtons();
             } catch (error) {
                 console.error('Error getting Luna response:', error);
                 removeThinking();
                 addMessage('Sorry, I encountered an error. Please try again.');
+            }
+        }
+
+        function addSummarizeButtons() {
+            // Select the div with the id 'chat'
+            const chatDiv = document.getElementById("chat");
+
+            if (chatDiv) {
+                // Select all anchor tags inside the 'chat' div
+                const links = chatDiv.querySelectorAll("a");
+
+                links.forEach(link => {
+                    // Create a "Summarize" button
+                    const button = document.createElement("button");
+                    button.textContent = "Summarize";
+                    button.className = "btn btn-success btn-sm";
+
+                    // Create the <i> element with the desired classes
+                    const icon = document.createElement("i");
+                    icon.className = "fa-thin fa-link";
+
+                    // Append the icon to the button
+                    button.prepend(icon)
+
+                    // Add an event listener to open the link in a new tab
+                    button.addEventListener("click", () => {
+                        window.open(link.href, "_blank");
+                    });
+
+                    // Insert the button after the link
+                    link.parentNode.insertBefore(button, link.nextSibling);
+                });
+            } else {
+                console.warn("No element with ID 'chat' found.");
             }
         }
 
