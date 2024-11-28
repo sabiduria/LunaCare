@@ -130,7 +130,7 @@
             const cycleLength = document.getElementById('cycleLength').value;
             //const NbDays = document.getElementById('NbDays').value;
             
-            const message = "Generate a details Ovulation calendar for a woman who saw her menstruation on "+firstDate+" for a menstrual cycle of "+cycleLength+" days. Suggest also nutrition and behavior to avoid intense pain";
+            const message = "Generate a details Ovulation calendar in html table for a woman who saw her menstruation on "+firstDate+" for a menstrual cycle of "+cycleLength+" days. Suggest also nutrition and behavior to avoid intense pain. date format YYYY-MM-DD";
             if (!message) return;
 
             //addMessage('You: ' + message);
@@ -147,11 +147,35 @@
                 const response = await aiSession.prompt(message);
                 removeThinking(); // Remove "Thinking..." once the response is ready
                 addMessage2(DOMPurify.sanitize(marked.parse(response)));
+                addGoogleCalendarLinks();
             } catch (error) {
                 console.error('Error getting Luna response:', error);
                 removeThinking();
                 addMessage2('Sorry, I encountered an error. Please try again.');
             }
+        }
+
+        // Function to add Google Calendar links
+        function addGoogleCalendarLinks() {
+            const contentDiv = document.getElementById("chatCalendar");
+
+            // Regex for YYYY-MM-DD date format
+            const dateRegex = /\b(\d{4}-\d{2}-\d{2})\b/g;
+
+            const textContent = contentDiv.innerHTML;
+
+            const updatedContent = textContent.replace(dateRegex, (match) => {
+                // Format the detected date into Google Calendar format
+                const formattedDate = match.replace(/-/g, ""); // Remove dashes (YYYYMMDD)
+
+                // Google Calendar event link
+                const calendarUrl = `https://www.google.com/calendar/render?action=TEMPLATE&text=Ovulation+Date&dates=${formattedDate}/${formattedDate}`;
+
+                // Return the original date with an "Add to Google Calendar" link
+                return `${match} <a href="${calendarUrl}" target="_blank" class="btn btn-success btn-sm"><i class="far fa-calendar-plus"></i></a>`;
+            });
+
+            contentDiv.innerHTML = updatedContent;
         }
 
         function addSummarizeButtons() {
