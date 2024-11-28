@@ -76,6 +76,7 @@
         }
 
         async function sendMessage() {
+            chat.innerHTML = "";
             const input = document.getElementById('input');
             const message = input.value.trim();
             if (!message) return;
