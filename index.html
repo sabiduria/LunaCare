@@ -9,6 +9,18 @@
     <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v6.6.0/css/sharp-thin.css">
     <link rel="stylesheet" href="style.css">
     <style>
+        #calendar {
+            height: 25vh;
+            background-color: rgb(255, 255, 255);
+            padding-top: 3%;
+        }
+        #chatCalendar{
+            height: 55vh;
+            border : 1px solid #c9c9c9;
+            overflow-y: scroll;
+            padding: 3%;
+            background-color: rgb(255, 255, 255);
+        }
         #chat{
             height: 80vh;
             border : 1px solid #c9c9c9;
@@ -37,6 +49,7 @@
     </script>
     <script type="module">
         document.getElementById('sendButton').addEventListener('click', sendMessage);
+        document.getElementById('generateCalendar').addEventListener('click', generateCalendar);
         import { marked } from "https://cdn.jsdelivr.net/npm/marked@13.0.3/lib/marked.esm.js";
         import DOMPurify from "https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.es.mjs";
         let aiSession = null;
@@ -47,7 +60,7 @@
             try {
                 aiSession = await self.ai.languageModel.create(
                     {
-                        systemPrompt: "You are a friendly, helpful assistant specialized in health, menstruation. Provide correct link to different article related to your specialization when responding"
+                        systemPrompt: "You are a friendly, helpful assistant specialized in health, menstruation, nutrition. Provide correct link to different article related to your specialization when responding and an ovulation calender if needed."
                     }
                 );
                 console.log('AI session created');
@@ -57,8 +70,12 @@
             }
         }
 
-        function showThinking() {
-            const chat = document.getElementById('chat');
+        function showThinking(area) {
+            var chat;
+            if(area==='chat')
+                chat = document.getElementById('chat');
+            else
+                chat = document.getElementById('chatCalendar');
             const thinkingElement = document.createElement('span');
             thinkingElement.id = 'thinking';
             thinkingElement.textContent = 'Just a moment Luna is thinking...';
@@ -75,6 +92,10 @@
             document.getElementById('chat').innerHTML += message + '<br>';
         }
 
+        function addMessage2(message) {
+            document.getElementById('chatCalendar').innerHTML += message + '<br>';
+        }
+
         async function sendMessage() {
             chat.innerHTML = "";
             const input = document.getElementById('input');
@@ -89,7 +110,7 @@
                 return;
             }
 
-            showThinking(); // Show "Thinking..." before getting the response
+            showThinking('chat'); // Show "Thinking..." before getting the response
 
             try {
                 const response = await aiSession.prompt(message);
@@ -100,6 +121,36 @@
                 console.error('Error getting Luna response:', error);
                 removeThinking();
                 addMessage('Sorry, I encountered an error. Please try again.');
+            }
+        }
+
+        async function generateCalendar() {
+            //chat.innerHTML = "";
+            const firstDate = document.getElementById('firstDate').value;
+            const cycleLength = document.getElementById('cycleLength').value;
+            //const NbDays = document.getElementById('NbDays').value;
+            
+            const message = "Generate a details Ovulation calendar for a woman who saw her menstruation on "+firstDate+" for a menstrual cycle of "+cycleLength+" days. Suggest also nutrition and behavior to avoid intense pain";
+            if (!message) return;
+
+            //addMessage('You: ' + message);
+            input.value = '';
+
+            if (!aiSession) {
+                addMessage2('Sorry, I am not available right now.');
+                return;
+            }
+
+            showThinking('chatCalendar'); // Show "Thinking..." before getting the response
+
+            try {
+                const response = await aiSession.prompt(message);
+                removeThinking(); // Remove "Thinking..." once the response is ready
+                addMessage2(DOMPurify.sanitize(marked.parse(response)));
+            } catch (error) {
+                console.error('Error getting Luna response:', error);
+                removeThinking();
+                addMessage2('Sorry, I encountered an error. Please try again.');
             }
         }
 
@@ -204,17 +255,62 @@
     };
 
     </script>
+
+    <script>
+        top.visible_div_id = 'left';
+        function toggle_visibility(id) {
+        var old_e = document.getElementById(top.visible_div_id);
+        var new_e = document.getElementById(id);
+        if(old_e) {
+            old_e.style.display = 'none';
+        }
+        new_e.style.display = 'block';   
+        top.visible_div_id = id;          
+        }
+    </script>
 </head>
 <body>
-    <div class="col-sm-6" style="height: 90vh; margin-top: 3%;">
-    <div id="chat" class="col-sm-12"></div>
+    <div class="col-sm-6" style="height: 90vh; margin-top: 3%;" id="left">
+        <div id="chat" class="col-sm-12"></div>
 
-    <div class="publisher bt-1 border-light">
-        <img class="avatar avatar-xs" src="https://img.icons8.com/color/36/000000/administrator-male.png" alt="...">
-        <input id="input"  class="publisher-input" type="text" placeholder="How do you feel today?">
-        <a id="sendButton" class="publisher-btn text-info" href="#" data-abc="true"><i class="fa fa-paper-plane"></i></a>
+        <div class="publisher bt-1 border-light">
+            <img class="avatar avatar-xs" src="https://img.icons8.com/color/36/000000/administrator-male.png" alt="...">
+            <input id="input"  class="publisher-input" type="text" placeholder="How do you feel today?">
+            <a id="sendButton" class="publisher-btn text-info" data-abc="true"><i class="fa fa-paper-plane"></i></a>
+            <a onclick="toggle_visibility('right');" class="publisher-btn text-info" data-abc="true"><i class="far fa-calendar-alt"></i></a>
+        </div>
     </div>
+
+    <div class="col-sm-6" style="height: 90vh; margin-top: 3%; display: none;" id="right">
+        <div id="calendar" class="col-sm-12">
+            <h4 class="text-center"><strong>Generate your calendar</strong></h4>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label for="firstDate">First Day of Your Last Period</label>
+                    <input type="date" name="firstDate" id="firstDate" class="form-control">
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label for="cycleLength">Average Length of Cycles</label>
+                    <input type="number" name="cycleLength" id="cycleLength" class="form-control">
+                </div>
+            </div>
+            
+            <div class="form-group text-center">
+                <button id="generateCalendar" class="btn btn-primary btn-sm"><i class="fa-thin fa-cogs"></i> Generate</button>
+            </div>
+        </div>
+        <div id="chatCalendar" class="col-sm-12">
+            
+        </div>
+
+        <div class="publisher bt-1 border-light">
+            <img class="avatar avatar-xs" src="https://img.icons8.com/color/36/000000/administrator-male.png" alt="...">
+            <a onclick="toggle_visibility('left');" class="publisher-btn text-info" data-abc="true"><i class="far fa-arrow-alt-circle-left"></i></a>
+        </div>
     </div>
+
     <div class="col-sm-6">
         <h1 style="text-align:center; margin-top: 40%; color: white;">
             <a href="" class="typewrite" data-period="2000" data-type='[ "Hi, I am Luna Care", "I am your Health Assistant", "I Love Medecine", "I Love to Help" ]'>
